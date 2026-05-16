@@ -48,9 +48,9 @@ let images=[
     price:"₹1500/night"
 },
 {
-src:"images/menu.png",
-title:"Shree Sharanam Hotel",
-price:"Hotel Exterior"
+    src:"images/menu.png",
+    title:"Shree Sharanam Hotel",
+    price:"Hotel Exterior"
 }
 ];
 
