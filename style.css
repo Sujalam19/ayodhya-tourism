@@ -184,7 +184,7 @@ color:#4d2700;
 .places-bg{
 background:
 linear-gradient(rgba(0,0,0,0.68),rgba(0,0,0,0.86)),
-url("./ayodhya_bg.jpg");
+url("./images/ayodhya_bg.jpg");
 background-size:cover;
 background-position:center;
 }
@@ -192,7 +192,7 @@ background-position:center;
 .booking-bg{
 background:
 linear-gradient(rgba(0,0,0,0.74),rgba(0,0,0,0.9)),
-url("./room1.png");
+url("./images/room1.png");
 background-size:cover;
 background-position:center;
 }
