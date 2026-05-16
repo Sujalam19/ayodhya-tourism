@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+<style>
+body{font-family:Poppins;background:#111;color:white}
+table{width:100%;border-collapse:collapse;margin-top:20px}
+th,td{padding:10px;border:1px solid #444;text-align:center}
+th{background:gold;color:black}
+</style>
+</head>
+
+<body>
+
+<h2>📊 Booking Dashboard</h2>
+
+<table id="dataTable"></table>
+<input type="text" id="search" placeholder="Search..." onkeyup="filterData()">
+
+<table id="dataTable"></table>
+
+<script>
+
+let fullData = [];
+
+fetch("https://script.google.com/macros/s/AKfycbzUSXY2ckE2GGW1Fz-0rSUQF83I5c2TbnrxkAKV2jLVFaet1LaR31hkvZL2dxaRu-NK/exec")
+
+.then(res=>res.json())
+.then(data=>{
+fullData = data;
+displayData(data);
+});
+
+function displayData(data){
+let table=document.getElementById("dataTable");
+table.innerHTML="";
+
+data.forEach((row,i)=>{
+let tr=document.createElement("tr");
+
+row.forEach(col=>{
+let td=document.createElement(i==0?"th":"td");
+td.innerText=col;
+tr.appendChild(td);
+});
+
+table.appendChild(tr);
+});
+}
+
+function filterData(){
+let val = document.getElementById("search").value.toLowerCase();
+
+let filtered = fullData.filter(row =>
+row.join(" ").toLowerCase().includes(val)
+);
+
+displayData(filtered);
+}
