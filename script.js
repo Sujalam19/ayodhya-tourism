@@ -50,7 +50,7 @@ let images=[
 {
     src:"images/menu.png",
     title:"Shree Sharanam Hotel",
-    price:"Hotel Exterior"
+    price:"Menu Card"
 }
 ];
 
