@@ -9,7 +9,7 @@ font-family:'Poppins',sans-serif;
 body{
 background:
 linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.8)),
-url("./ayodhya_bg.jpg");
+url("./images/ayodhya_bg.jpg");
 background-size:cover;
 background-position:center;
 background-attachment:fixed;
@@ -148,6 +148,34 @@ box-shadow:
 inset 0 1px 0 rgba(255,255,255,0.7);
 overflow:hidden;
 text-transform:uppercase;
+}
+
+.home-actions{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:16px;
+flex-wrap:wrap;
+margin-top:32px;
+}
+
+.home-actions .book-now-btn{
+margin-top:0;
+}
+
+.places-now-btn{
+min-width:180px;
+padding:16px 30px;
+margin-top:0;
+border:1px solid rgba(255,215,0,0.55);
+background:rgba(0,0,0,0.5);
+color:#ffe07a;
+box-shadow:0 0 18px rgba(255,215,0,0.35);
+}
+
+.places-now-btn:hover{
+background:rgba(255,215,0,0.13);
+color:white;
 }
 
 .book-now-btn::before{
@@ -339,6 +367,12 @@ background:rgba(42,120,73,0.35);
 color:#c8ffd9;
 }
 
+.availability-box.limited{
+border-color:rgba(255,178,58,0.65);
+background:rgba(146,87,0,0.36);
+color:#ffe0a3;
+}
+
 .availability-box.full{
 border-color:rgba(255,93,93,0.55);
 background:rgba(130,32,32,0.36);
@@ -476,6 +510,13 @@ font-weight:500;
 margin-top:4px;
 display:block;
 text-align:left;
+}
+
+.person-label{
+margin-top:-4px;
+text-align:center;
+color:#fff3cf;
+font-size:14px;
 }
 
 @media (max-width: 900px){

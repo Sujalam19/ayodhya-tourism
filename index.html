@@ -24,10 +24,15 @@
 <section id="home" class="active hero">
 <h1>Welcome to Ayodhya</h1>
 <p class="hero-subtitle">Experience a royal stay near the sacred heart of Ayodhya</p>
+<div class="home-actions">
 <button class="book-now-btn" onclick="showPage('booking')">
     <span>Book Now</span>
     <small>Plan Your Stay</small>
 </button>
+<button class="places-now-btn" onclick="showPage('places')">
+    Places to Visit
+</button>
+</div>
 </section>
 
 <!-- PLACES -->
@@ -63,7 +68,7 @@
 <div class="place-card">
 <img src="images/hanuman_garhi.jpg" onclick="openImage(this.src)" alt="Hanuman Garhi">
 <h3>Hanuman Garhi</h3>
-<p>Distance from hotel: 1.8 km</p>
+<p>Distance from hotel: 1.2 km</p>
 </div>
 
 <div class="place-card">
@@ -75,25 +80,19 @@
 <div class="place-card">
 <img src="images/surajkund.jpg" onclick="openImage(this.src)" alt="Suraj Kund">
 <h3>Suraj Kund</h3>
-<p>Distance from hotel: 9.7 km</p>
+<p>Distance from hotel: 4 km</p>
 </div>
 
 <div class="place-card">
 <img src="images/bharat_kund.jpg" onclick="openImage(this.src)" alt="Bharat Kund">
 <h3>Bharat Kund</h3>
-<p>Distance from hotel: 20 km</p>
-</div>
-
-<div class="place-card">
-<img src="images/dogra_residency.jpg" onclick="openImage(this.src)" alt="Dogra Residency">
-<h3>Dogra Residency</h3>
-<p>Distance from hotel: 9.5 km</p>
+<p>Distance from hotel: 8 km</p>
 </div>
 
 <div class="place-card">
 <img src="images/guptar_ghat.jpg" onclick="openImage(this.src)" alt="Guptar Ghat">
 <h3>Guptar Ghat</h3>
-<p>Distance from hotel: 8.5 km</p>
+<p>Distance from hotel: 10 km</p>
 </div>
 
 </div>
@@ -125,15 +124,18 @@
             <option>Food Package</option>
         </select>
 
-        <label class="field-label">Number of Persons</label>
-
         <div class="person-box">
             <button type="button" onclick="decreasePerson()">-</button>
             <input type="text" id="personCount" value="1" readonly>
             <button type="button" onclick="increasePerson()">+</button>
         </div>
 
-        <textarea id="details" placeholder="Select service first..."></textarea>
+        <label class="field-label person-label">Number of Persons</label>
+
+        <textarea id="details" placeholder="Examples:
+Hotel booking: Need deluxe AC room
+Cab booking: Pickup from railway station
+VIP Darshan: Morning slot required"></textarea>
 
         <button class="pay-btn" onclick="submitBooking()">Pay & Book</button>
     </div>
@@ -171,6 +173,15 @@
 
     <button class="popup-btn" onclick="downloadPDF()">Download PDF</button>
     <button class="popup-btn close-btn" onclick="closePopup()">Close</button>
+  </div>
+</div>
+
+<div id="paymentPopup" class="popup">
+  <div class="popup-box">
+    <h2>Confirm Advance Payment</h2>
+    <p id="paymentMessage"></p>
+    <button class="popup-btn" onclick="startRazorpayPayment()">Proceed to Pay</button>
+    <button class="popup-btn close-btn" onclick="closePaymentPopup()">Cancel</button>
   </div>
 </div>
 

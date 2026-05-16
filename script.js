@@ -15,7 +15,7 @@ function closeImage(){
 document.getElementById("lightbox").style.display="none";
 }
 
-/* SLIDER */
+/* HOTEL IMAGE SLIDER */
 let images=[
 {
     src:"images/home.png",
@@ -24,37 +24,38 @@ let images=[
 },
 {
     src:"images/home(f).png",
-    title:"Shree Sharanam Hotel",
+    title:"Hotel Front View",
     price:"Hotel Exterior"
 },
 {
     src:"images/room1.png",
     title:"Deluxe AC Room",
-    price:"₹1200/night"
+    price:"\u20B91200/night"
 },
 {
     src:"images/nonac.png",
     title:"Non AC Room",
-    price:"₹900/night"
+    price:"\u20B9900/night"
 },
 {
     src:"images/4bed.png",
     title:"Family 4 Bed Room",
-    price:"₹1300/night"
+    price:"\u20B91300/night"
 },
 {
     src:"images/4bedac.png",
     title:"Family 4 Bed AC Room",
-    price:"₹1500/night"
+    price:"\u20B91500/night"
 },
 {
     src:"images/menu.png",
-    title:"Shree Sharanam Hotel",
+    title:"Food Menu Card",
     price:"Menu Card"
 }
 ];
 
 let i=0;
+let latestAvailability = null;
 
 function updateRoomSlider(){
 const room = images[i];
@@ -86,42 +87,31 @@ function getRoomAvailability(dateValue){
         return null;
     }
 
-    const date = new Date(dateValue + "T00:00:00");
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const totalRooms = 12;
-    const bookedRooms = (day * 3 + month * 2) % 11;
-    const availableRooms = Math.max(totalRooms - bookedRooms, 0);
+    const statuses = [
+        { rooms: 5, text: "5 rooms available", status: "available" },
+        { rooms: 2, text: "Only 2 rooms left", status: "limited" },
+        { rooms: 0, text: "No rooms available", status: "full" }
+    ];
 
-    return {
-        totalRooms,
-        bookedRooms,
-        availableRooms
-    };
+    return statuses[Math.floor(Math.random() * statuses.length)];
 }
 
 function showAvailability(){
     const dateInput = document.getElementById("date");
     const availabilityBox = document.getElementById("availabilityBox");
-    const availability = getRoomAvailability(dateInput.value);
+    latestAvailability = getRoomAvailability(dateInput.value);
 
-    availabilityBox.classList.remove("available","full");
+    availabilityBox.classList.remove("available","limited","full");
+    availabilityBox.dataset.rooms = "";
 
-    if(!availability){
+    if(!latestAvailability){
         availabilityBox.textContent = "Select a date to check room availability";
         return;
     }
 
-    if(availability.availableRooms > 0){
-        availabilityBox.classList.add("available");
-        availabilityBox.textContent =
-        `${availability.availableRooms} rooms available on selected date`;
-    }
-    else{
-        availabilityBox.classList.add("full");
-        availabilityBox.textContent =
-        "Rooms are full on selected date. Please choose another date.";
-    }
+    availabilityBox.classList.add(latestAvailability.status);
+    availabilityBox.textContent = latestAvailability.text;
+    availabilityBox.dataset.rooms = latestAvailability.rooms;
 }
 
 function changePlaceholder(){
@@ -129,42 +119,44 @@ function changePlaceholder(){
     let details = document.getElementById("details");
 
     if(service==="Hotel Booking"){
-        details.placeholder=
-        "Example:\n- Need AC Room\n- Early Check-in\n- Near Ram Mandir\n- Family Room";
+        details.placeholder="Example:\nNeed deluxe AC room";
     }
     else if(service==="Cab Service"){
-        details.placeholder=
-        "Example:\n- Pickup from Railway Station\n- Drop at Ram Mandir\n- Airport Pickup";
+        details.placeholder="Example:\nPickup from railway station";
     }
     else if(service==="VIP Darshan"){
-        details.placeholder=
-        "Example:\n- VIP Darshan for 4 persons\n- Morning slot preferred";
+        details.placeholder="Example:\nMorning slot required";
     }
     else if(service==="Tour Guide"){
-        details.placeholder=
-        "Example:\n- Hindi Guide Required\n- Ayodhya Full Day Tour";
+        details.placeholder="Example:\nHindi guide required";
     }
     else if(service==="Food Package"){
-        details.placeholder=
-        "Example:\n- Pure Veg Food\n- Food for 5 persons";
+        details.placeholder="Example:\nPure veg food package";
     }
     else{
-        details.placeholder="Select service first...";
+        details.placeholder=
+        "Examples:\nHotel booking: Need deluxe AC room\nCab booking: Pickup from railway station\nVIP Darshan: Morning slot required";
     }
 }
 
 function submitBooking(){
     let service = document.getElementById("service").value;
     let date = document.getElementById("date").value;
-    let availability = getRoomAvailability(date);
+    let availabilityBox = document.getElementById("availabilityBox");
+    let availableRooms = availabilityBox.dataset.rooms || "";
 
     if(!document.getElementById("name").value || !document.getElementById("phone").value || !date || !service){
         alert("Please fill name, phone, date and service.");
         return;
     }
 
-    if(service === "Hotel Booking" && availability && availability.availableRooms === 0){
-        alert("Rooms are full on selected date. Please select another date.");
+    if(!availableRooms){
+        showAvailability();
+        availableRooms = availabilityBox.dataset.rooms || "";
+    }
+
+    if(service === "Hotel Booking" && Number(availableRooms) === 0){
+        alert("No rooms available. Please select another date.");
         return;
     }
 
@@ -172,6 +164,7 @@ function submitBooking(){
     let bookingID = "AYO" + Math.floor(10000 + Math.random()*90000);
 
     latestBooking = {
+        timestamp: new Date().toLocaleString(),
         bookingID,
         name: document.getElementById("name").value,
         phone: document.getElementById("phone").value,
@@ -180,22 +173,46 @@ function submitBooking(){
         service,
         persons: document.getElementById("personCount").value,
         details: document.getElementById("details").value,
-        availableRooms: availability ? availability.availableRooms : "",
-        advance
+        availableRooms,
+        advance,
+        paymentId: ""
     };
 
+    showPaymentPopup();
+}
+
+function showPaymentPopup(){
+    document.getElementById("paymentMessage").innerHTML =
+    `
+    Service: ${latestBooking.service}<br><br>
+    Date: ${latestBooking.date}<br><br>
+    Advance Amount: Rs. ${latestBooking.advance}<br><br>
+    Razorpay TEST mode payment will open after confirmation.
+    `;
+
+    document.getElementById("paymentPopup").style.display = "flex";
+}
+
+function closePaymentPopup(){
+    document.getElementById("paymentPopup").style.display = "none";
+}
+
+function startRazorpayPayment(){
+    closePaymentPopup();
+
     if(typeof Razorpay === "undefined"){
+        latestBooking.paymentId = "TEST-MANUAL";
         sendBooking(latestBooking);
         return;
     }
 
     var options = {
         key: "rzp_test_SoKayhXvmZ6kiJ",
-        amount: advance * 100,
+        amount: latestBooking.advance * 100,
         currency: "INR",
         name: "Ayodhya Tourism",
-        description: service + " Advance Payment",
-        image: "logo.png",
+        description: latestBooking.service + " Advance Payment",
+        image: "images/home.png",
 
         handler: function (response){
             latestBooking.paymentId = response.razorpay_payment_id;
@@ -255,29 +272,35 @@ document.getElementById("popupMessage").innerHTML =
 `
 Booking ID: ${latestBooking.bookingID}<br><br>
 Service: ${latestBooking.service}<br><br>
+Advance Amount: Rs. ${latestBooking.advance}<br><br>
 Date: ${latestBooking.date}<br><br>
-Rooms Available: ${latestBooking.availableRooms || "N/A"}<br><br>
-Advance Paid: Rs. ${latestBooking.advance}<br><br>
 Cancellation Policy:<br>
-48 hrs before - 75% refund<br>
-Less than 24 hrs - No refund
+48 hrs before:<br>
+75% refund<br><br>
+Less than 24 hrs:<br>
+No refund
 `;
 
 let msg =
 `Booking Confirmed
 
+Name: ${latestBooking.name}
 Booking ID: ${latestBooking.bookingID}
 Service: ${latestBooking.service}
-Advance Paid: Rs. ${latestBooking.advance}
-Date: ${latestBooking.date}
 Persons: ${latestBooking.persons}
+Date: ${latestBooking.date}
+Advance Paid: Rs. ${latestBooking.advance}
 
-Cancellation:
-48 hrs before = 75% refund
-Less than 24 hrs = No refund`;
+Cancellation Policy
+48 hrs before: 75% refund
+Less than 24 hrs: No refund`;
 
-document.getElementById("whatsappBtn").href =
-`https://wa.me/${latestBooking.phone}?text=${encodeURIComponent(msg)}`;
+const whatsappUrl = `https://wa.me/${latestBooking.phone}?text=${encodeURIComponent(msg)}`;
+document.getElementById("whatsappBtn").href = whatsappUrl;
+
+setTimeout(function(){
+    window.open(whatsappUrl, "_blank");
+}, 600);
 }
 
 function getAdvanceAmount(service){
@@ -292,21 +315,67 @@ async function downloadPDF(){
 const { jsPDF } = window.jspdf;
 const doc = new jsPDF();
 
-doc.text("Ayodhya Tourism Booking", 20,20);
-doc.text(`Booking ID: ${latestBooking.bookingID}`,20,40);
-doc.text(`Service: ${latestBooking.service}`,20,60);
-doc.text(`Advance Paid: Rs. ${latestBooking.advance}`,20,80);
-doc.text(`Date: ${latestBooking.date}`,20,100);
-doc.text(`Persons: ${latestBooking.persons}`,20,120);
-doc.text(`Cancellation Policy:
-48 hrs before = 75% refund
-Less than 24 hrs = No refund`,20,140);
+try{
+    const logo = await loadImageAsDataUrl("images/home.png");
+    doc.addImage(logo, "PNG", 15, 12, 28, 20);
+}
+catch(error){
+    console.log(error);
+}
+
+doc.setFontSize(20);
+doc.setTextColor(120, 82, 0);
+doc.text("Ayodhya Tourism", 50, 22);
+
+doc.setFontSize(13);
+doc.setTextColor(0, 0, 0);
+doc.text("Booking Confirmation", 20, 45);
+doc.line(20, 50, 190, 50);
+
+doc.setFontSize(11);
+doc.text(`Name: ${latestBooking.name}`,20,65);
+doc.text(`Booking ID: ${latestBooking.bookingID}`,20,75);
+doc.text(`Phone: ${latestBooking.phone}`,20,85);
+doc.text(`Email: ${latestBooking.email || "N/A"}`,20,95);
+doc.text(`Service: ${latestBooking.service}`,20,105);
+doc.text(`Persons: ${latestBooking.persons}`,20,115);
+doc.text(`Date: ${latestBooking.date}`,20,125);
+doc.text(`Advance Paid: Rs. ${latestBooking.advance}`,20,135);
+doc.text(`Payment ID: ${latestBooking.paymentId || "N/A"}`,20,145);
+
+doc.setFontSize(13);
+doc.text("Cancellation Policy", 20, 165);
+doc.setFontSize(11);
+doc.text("48 hrs before: 75% refund",20,177);
+doc.text("Less than 24 hrs: No refund",20,187);
 
 doc.save("booking.pdf");
+}
+
+function loadImageAsDataUrl(src){
+    return new Promise(function(resolve, reject){
+        const image = new Image();
+        image.onload = function(){
+            try{
+            const canvas = document.createElement("canvas");
+            canvas.width = image.naturalWidth;
+            canvas.height = image.naturalHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(image, 0, 0);
+            resolve(canvas.toDataURL("image/png"));
+            }
+            catch(error){
+                reject(error);
+            }
+        };
+        image.onerror = reject;
+        image.src = src;
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function(){
     const dateInput = document.getElementById("date");
     const today = new Date().toISOString().split("T")[0];
     dateInput.min = today;
+    updateRoomSlider();
 });
