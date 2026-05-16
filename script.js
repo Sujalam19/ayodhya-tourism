@@ -18,24 +18,39 @@ document.getElementById("lightbox").style.display="none";
 /* SLIDER */
 let images=[
 {
-    src:"room1.png",
+    src:"images/home.png",
+    title:"Shree Sharanam Hotel",
+    price:"Hotel Exterior"
+},
+{
+    src:"images/home(f).png",
+    title:"Shree Sharanam Hotel",
+    price:"Hotel Exterior"
+},
+{
+    src:"images/room1.png",
     title:"Deluxe AC Room",
     price:"₹1200/night"
 },
 {
-    src:"nonac.png",
+    src:"images/nonac.png",
     title:"Non AC Room",
     price:"₹900/night"
 },
 {
-    src:"4bed.png",
+    src:"images/4bed.png",
     title:"Family 4 Bed Room",
     price:"₹1300/night"
 },
 {
-    src:"4bedac.png",
+    src:"images/4bedac.png",
     title:"Family 4 Bed AC Room",
     price:"₹1500/night"
+},
+{
+src:"images/menu.png",
+title:"Shree Sharanam Hotel",
+price:"Hotel Exterior"
 }
 ];
 
